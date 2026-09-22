@@ -50,20 +50,6 @@ All endpoints are noun-based; the HTTP verb defines the action.
 ```
 GET /api/v1/products?category=electronics&min_price=1000&max_price=5000&limit=5&offset=0&sort=price_asc
 ```
-
-### Idempotent Order Creation (prevents duplicate payments)
-```bash
-curl -X POST http://localhost:3000/api/v1/orders \
-  -H "Content-Type: application/json" \
-  -H "Idempotency-Key: 7c9e6679-7425-40de-944b-e07fc1f90ae7" \
-  -d '{"product_id": 1, "quantity": 2}'
-```
-Sending the **same** `Idempotency-Key` again (e.g. a mobile app retry after a
-timeout) returns the original order instead of creating a duplicate — the
-response includes `"replayed": true`.
-
----
-
 ## ⚠️ Module 2 — Consistent Error Schema
 
 Every error, from every part of the app, has the same shape:
@@ -139,14 +125,44 @@ ecommerce-api/
 └── postman_collection.json
 ```
 
-## 🧪 Testing
-Import `postman_collection.json` into Postman, or use the `curl` examples
-above. All endpoints were manually verified for:
-- Correct status codes (200/201/400/404)
-- Idempotent `PUT` (same input → same output, no duplicate side effects)
-- Idempotent `POST /orders` via `Idempotency-Key`
-- Field-selector and GraphQL both returning reduced payloads
+## Testing
 
+Import `postman_collection.json` into Postman, or use the `curl` examples above.
+
+The API was tested locally for the following scenarios:
+
+| Test | Expected Result |
+|---|---|
+| GET `/api/v1/products` | 200 OK with product list and pagination |
+| GET `/api/v1/products/:id` | 200 OK for existing product |
+| POST `/api/v1/products` | 201 Created for valid product |
+| POST `/api/v1/products` with invalid data | 400 Bad Request |
+| PUT `/api/v1/products/:id` | 200 OK and product updated |
+| Repeated PUT with same input | Same final state; no duplicate side effects |
+| DELETE `/api/v1/products/:id` | 200 OK |
+| GET non-existent product | 404 Not Found with standardized error response |
+| POST `/api/v1/orders` without Idempotency-Key | 400 Bad Request |
+| Repeated POST `/api/v1/orders` with same Idempotency-Key | Same order response; second request is replayed |
+| REST field selector `?fields=title,price` | Only requested fields returned |
+| GraphQL `/graphql` | Only requested GraphQL fields returned |
+
+
+### Error Handling Testing
+
+The API was tested for client-side validation errors and non-existent resources.
+
+- `400 Bad Request` for invalid request data.
+- `404 Not Found` for non-existent product IDs.
+- Errors follow a standardized JSON structure containing an error code, message, and timestamp.
+
+### Over-Fetching Testing
+
+Both supported solutions were tested:
+
+- REST field selector: `?fields=title,price`
+- GraphQL: `/graphql`
+
+Both allow the client to request only the required product fields, reducing unnecessary response payload.
 ## 🛠 Tech Stack
 Node.js, Express, GraphQL (`graphql` + `graphql-http`), in-memory data store
 (no external DB required for this lab).
