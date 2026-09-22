@@ -1,17 +1,5 @@
 # E-Commerce API — Enterprise RESTful + GraphQL (CSC337 Lab 03)
 
-A local Node.js/Express API for a product catalog & order system that fixes
-three real-world backend problems:
-
-1. **Bad URI design & raw 500 crashes** → clean noun-based REST routes + a
-   centralized error handler with a standardized JSON error schema.
-2. **Duplicate orders/payments on mobile retry** → `Idempotency-Key` header
-   support on order creation.
-3. **REST over-fetching** → `?fields=` query param **and** a full `/graphql`
-   endpoint, so clients only receive the exact data they ask for.
-
----
-
 ## 🚀 Setup & Run
 
 ```bash
