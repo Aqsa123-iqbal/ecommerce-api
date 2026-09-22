@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "E-Commerce API - CSC337 Lab 03",
+    "description": "RESTful + GraphQL API for product catalog and orders",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        { "name": "List Products (filter + paginate)", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products?category=electronics&limit=5&offset=0" } },
+        { "name": "Get Product by ID", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/1" } },
+        { "name": "Get Product - Field Selection", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/1?fields=title,price" } },
+        { "name": "Get Product - 404 Not Found", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/products/9999" } },
+        {
+          "name": "Create Product (201)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/v1/products",
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Bluetooth Speaker\",\n  \"price\": 3200,\n  \"category\": \"electronics\",\n  \"stock\": 40,\n  \"description\": \"Portable waterproof speaker\",\n  \"vendor\": \"SoundTech\",\n  \"rating\": 4.2\n}" }
+          }
+        },
+        {
+          "name": "Create Product - 400 Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/v1/products",
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Bad Product\",\n  \"price\": -5\n}" }
+          }
+        },
+        {
+          "name": "Update Product (PUT - Idempotent)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/v1/products/1",
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Wireless Earbuds Pro\",\n  \"price\": 4599,\n  \"category\": \"electronics\",\n  \"stock\": 110\n}" }
+          }
+        },
+        { "name": "Delete Product", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/v1/products/1" } }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order (with Idempotency-Key)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "test-key-001" }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders",
+            "body": { "mode": "raw", "raw": "{\n  \"product_id\": 2,\n  \"quantity\": 1\n}" }
+          }
+        },
+        {
+          "name": "Retry Same Order (should NOT duplicate)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "test-key-001" }
+            ],
+            "url": "{{baseUrl}}/api/v1/orders",
+            "body": { "mode": "raw", "raw": "{\n  \"product_id\": 2,\n  \"quantity\": 1\n}" }
+          }
+        },
+        { "name": "Get Order by ID", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/orders/1" } }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "Query Single Product (title, price only)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/graphql",
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"{ product(id: 1) { title price } }\"\n}" }
+          }
+        },
+        {
+          "name": "Query Products List by Category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/graphql",
+            "body": { "mode": "raw", "raw": "{\n  \"query\": \"{ products(category: \\\"fashion\\\") { id title price } }\"\n}" }
+          }
+        }
+      ]
+    }
+  ]
+}
