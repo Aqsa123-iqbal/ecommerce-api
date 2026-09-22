@@ -1,4 +1,4 @@
-# E-Commerce API — Enterprise RESTful + GraphQL (CSC337 Lab 03)
+# E-Commerce API — Enterprise RESTful + GraphQL (Lab 03)
 
 ## 🚀 Setup & Run
 
