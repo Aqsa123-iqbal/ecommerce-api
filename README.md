@@ -38,6 +38,9 @@ All endpoints are noun-based; the HTTP verb defines the action.
 | POST | `/api/v1/orders` | Create order (requires `Idempotency-Key` header) |
 | GET | `/api/v1/orders/:id` | Get single order |
 
+<img width="1911" height="309" alt="1" src="https://github.com/user-attachments/assets/45614978-a32b-4c1b-a6b3-ab3908388197" />
+
+
 ### Filtering & Pagination
 ```
 GET /api/v1/products?category=electronics&min_price=1000&max_price=5000&limit=5&offset=0&sort=price_asc
@@ -64,6 +67,9 @@ Every error, from every part of the app, has the same shape:
 | `400` | Client sent invalid data (validation error) |
 | `404` | Resource does not exist |
 | `500` | Genuine unexpected server error (never used for client mistakes) |
+
+
+<img width="1911" height="309" alt="1" src="https://github.com/user-attachments/assets/63bfaa04-92e4-4d1c-bca5-15d45fc53bd2" />
 
 ---
 
@@ -94,6 +100,9 @@ Visit `http://localhost:3000/playground` in a browser for an interactive
 query builder.
 
 ---
+
+<img width="1919" height="284" alt="2" src="https://github.com/user-attachments/assets/4e09086b-9110-443e-be17-bc8f6970066c" />
+
 
 ## 🗂 Project Structure
 ```
@@ -137,6 +146,11 @@ The API was tested locally for the following scenarios:
 | Repeated POST `/api/v1/orders` with same Idempotency-Key | Same order response; second request is replayed |
 | REST field selector `?fields=title,price` | Only requested fields returned |
 | GraphQL `/graphql` | Only requested GraphQL fields returned |
+
+<img width="1919" height="892" alt="7" src="https://github.com/user-attachments/assets/4820ef76-2955-4dec-93e7-8887327ac0fb" />
+<img width="1920" height="891" alt="5" src="https://github.com/user-attachments/assets/4fa853b6-16db-4384-954b-558002dc7551" />
+<img width="1920" height="886" alt="4" src="https://github.com/user-attachments/assets/0760e599-d730-45ef-908a-2fe69477adaa" />
+
 
 
 ### Error Handling Testing
